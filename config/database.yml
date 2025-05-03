@@ -88,6 +88,8 @@ test:
     adapter: postgresql
     encoding: unicode
     database: good_night_test
+    username: postgres
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
     host: localhost
     port: 5432
   primary_replica:
