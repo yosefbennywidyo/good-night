@@ -1,8 +1,8 @@
 class User < ApplicationRecord
-  has_many :sleep_records, dependent: :destroy
+  has_many :sleep_records, dependent: :destroy_async
   # Followers relationship
-  has_many :active_followings, class_name: "Following", foreign_key: "follower_id", dependent: :destroy
-  has_many :passive_followings, class_name: "Following", foreign_key: "followed_id", dependent: :destroy
+  has_many :active_followings, class_name: "Following", foreign_key: "follower_id", dependent: :destroy_async
+  has_many :passive_followings, class_name: "Following", foreign_key: "followed_id", dependent: :destroy_async
   has_many :following, through: :active_followings, source: :followed
   has_many :followers, through: :passive_followings, source: :follower
 
