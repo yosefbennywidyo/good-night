@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+# Sleep record that's complete (has both clock in and clock out)
+one:
+  user: one
+  clock_in_at: <%= 1.hour.ago.to_s %>
+  
+two:
+  user: two
+  clock_in_at: <%= 2.hours.ago.to_s %>
+  clock_out_at: <%= 1.hour.ago.to_s %>
