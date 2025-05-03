@@ -38,6 +38,11 @@ module Api
         assert_response :success
       end
 
+      test "should not update user" do
+        patch api_v1_user_url(@first_user), params: { user: { name: "" } }, as: :json
+        assert_response :unprocessable_entity
+      end
+
       test "should destroy user" do
         assert_difference("User.count", -1) do
           delete api_v1_user_url(@first_user), as: :json

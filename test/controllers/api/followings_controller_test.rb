@@ -16,6 +16,17 @@ module Api
         assert_response :created
       end
 
+      test "should not create a new following relationship" do
+        @user.follow(@target_user)
+
+        assert_no_difference("Following.count") do
+          post api_v1_user_followings_url(@user), params: { following: { follower_id: @user.id, followed_id: @target_user.id } }, as: :json
+        end
+
+        response_json = JSON.parse(response.body)
+        assert_response :unprocessable_entity
+      end
+
       test "should return error when trying to follow self" do
         post api_v1_user_followings_url(@user), params: { following: { follower_id: @user.id, followed_id: @user.id } }, as: :json
 
