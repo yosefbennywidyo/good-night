@@ -52,6 +52,19 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
+group :development, :profile do
+  gem "prosopite"
+  gem "pg_query" # needed for non MySQL/MariaDB
+  gem "faker", git: "https://github.com/faker-ruby/faker.git", branch: "main"
+  # For memory profiling
+  gem "memory_profiler"
+  gem "benchmark-ips"
+
+  # For call-stack profiling flamegraphs
+  gem "stackprof"
+  gem "derailed_benchmarks"
+end
+
 group :test do
   # Database cleaner
   gem "database_cleaner-active_record"
