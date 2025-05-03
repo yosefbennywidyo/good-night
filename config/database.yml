@@ -23,7 +23,7 @@ default: &default
 development:
   primary: &primary_development
     <<: *default
-    database: emas_development
+    database: good_night_development
     adapter: postgresql
   primary_replica:
     database: good_night_development
@@ -84,37 +84,21 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  primary: &primary_test
-    <<: *default
-    database: emas_test
+  primary:
     adapter: postgresql
-  primary_replica:
+    encoding: unicode
     database: good_night_test
-    username: postgres_readonly
-    password: <%= ENV["POSTGRES_READONLY_PASSWORD"] %>
+    host: localhost
+    port: 5432
+  primary_replica:
     adapter: postgresql
+    encoding: unicode
+    database: good_night_test
+    username: postgres
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
     replica: true
-  cache:
-    <<: *primary_test
-    database: good_night_test_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_test
-    database: good_night_test_queue
-    adapter: postgresql
-    migrations_paths: db/queue_migrate
-  queue_replica:
-    <<: *primary_test
-    database: good_night_test_queue
-    adapter: postgresql
-    username: postgres_readonly
-    password: <%= ENV["POSTGRES_READONLY_PASSWORD"] %>
-    migrations_paths: db/queue_migrate
-    replica: true
-  cable:
-    <<: *primary_test
-    database: good_night_test_cable
-    migrations_paths: db/cable_migrate
+    host: localhost
+    port: 5432
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -139,7 +123,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: emas_production
+    database: good_night_production
     adapter: postgresql
   primary_replica:
     database: good_night_production
