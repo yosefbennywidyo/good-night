@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :sleep_records, dependent: :destroy
   # Followers relationship
   has_many :active_followings, class_name: "Following", foreign_key: "follower_id", dependent: :destroy
   has_many :passive_followings, class_name: "Following", foreign_key: "followed_id", dependent: :destroy
@@ -8,7 +9,11 @@ class User < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   def follow(other_user)
-    active_followings.create(followed_id: other_user.id) unless self == other_user
+    return if self == other_user
+
+    errors.add(:base, "You are already following #{other_user.name}.") unless following?(other_user)
+
+    following = active_followings.create(followed_id: other_user.id)
   end
 
   def unfollow(other_user)
@@ -17,5 +22,15 @@ class User < ApplicationRecord
 
   def following?(other_user)
     following.include?(other_user)
+  end
+
+  def friends_sleep_records_from_previous_week
+    # Get sleep records from followed users from the previous week
+    user_ids = following.pluck(:id)
+
+    SleepRecord.where(user_id: user_ids)
+              .where(clock_in_at: 1.week.ago..Time.current)
+              .where.not(clock_out_at: nil)
+              .order(duration_seconds: :desc)
   end
 end
