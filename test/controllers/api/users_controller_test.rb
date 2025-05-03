@@ -14,10 +14,18 @@ module Api
 
       test "should create user" do
         assert_difference("User.count") do
-          post api_v1_users_url, params: { user: { name: @user.name } }, as: :json
+          post api_v1_users_url, params: { user: { name: "User new" } }, as: :json
         end
 
         assert_response :created
+      end
+
+      test "should not create user" do
+        post api_v1_users_url, params: { user: { name: @user.name } }, as: :json
+
+        assert_response :unprocessable_entity
+        error_message = JSON.parse(response.body)["name"]
+        assert_includes error_message, "has already been taken"
       end
 
       test "should show user" do
