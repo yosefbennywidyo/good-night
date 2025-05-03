@@ -55,4 +55,6 @@ end
 group :test do
   # Database cleaner
   gem "database_cleaner-active_record"
+  # Test coverage
+  gem "simplecov", require: false
 end
