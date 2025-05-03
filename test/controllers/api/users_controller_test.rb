@@ -4,7 +4,7 @@ module Api
   module V1
     class UsersControllerTest < ActionDispatch::IntegrationTest
       setup do
-        @user = users(:one)
+        @first_user = users(:one)
       end
 
       test "should get index" do
@@ -21,7 +21,7 @@ module Api
       end
 
       test "should not create user" do
-        post api_v1_users_url, params: { user: { name: @user.name } }, as: :json
+        post api_v1_users_url, params: { user: { name: @first_user.name } }, as: :json
 
         assert_response :unprocessable_entity
         error_message = JSON.parse(response.body)["name"]
@@ -29,18 +29,18 @@ module Api
       end
 
       test "should show user" do
-        get api_v1_user_url(@user), as: :json
+        get api_v1_user_url(@first_user), as: :json
         assert_response :success
       end
 
       test "should update user" do
-        patch api_v1_user_url(@user), params: { user: { name: @user.name } }, as: :json
+        patch api_v1_user_url(@first_user), params: { user: { name: @first_user.name } }, as: :json
         assert_response :success
       end
 
       test "should destroy user" do
         assert_difference("User.count", -1) do
-          delete api_v1_user_url(@user), as: :json
+          delete api_v1_user_url(@first_user), as: :json
         end
 
         assert_response :no_content
