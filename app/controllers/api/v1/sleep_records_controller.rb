@@ -37,11 +37,11 @@ module Api
 
       private
       def set_user
-        @user = User.find(params[:user_id])
+        @user = User.find(sleep_record_params[:user_id])
       end
 
       def set_sleep_record
-        @sleep_record = @user.sleep_records.find(params[:id])
+        @sleep_record = @user.sleep_records.find(sleep_record_params[:id])
       end
 
       def format_sleep_records(records)
@@ -68,7 +68,7 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def sleep_record_params
-        params.expect(sleep_record: [ :user_id, :clock_in_at, :clock_out_at ])
+        params.permit(:id, :user_id, sleep_record: [ :clock_in_at, :clock_out_at ])
       end
     end
   end
