@@ -1,5 +1,5 @@
 class SleepRecord < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, counter_cache: :sleep_records_count
   validates :clock_in_at, presence: true
 
   # Update duration when clocking out
