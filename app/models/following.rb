@@ -1,4 +1,6 @@
 class Following < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :follower, class_name: "User", counter_cache: :following_count
   belongs_to :followed, class_name: "User", counter_cache: :followers_count
 

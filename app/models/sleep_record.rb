@@ -1,4 +1,6 @@
 class SleepRecord < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :user, counter_cache: :sleep_records_count
   validates :clock_in_at, presence: true
 

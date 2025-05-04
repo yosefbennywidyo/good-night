@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  acts_as_paranoid
+
   has_many :sleep_records, dependent: :destroy_async
   # Followers relationship
   has_many :active_followings, class_name: "Following", foreign_key: "follower_id", dependent: :destroy_async

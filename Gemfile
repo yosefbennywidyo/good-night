@@ -42,6 +42,8 @@ gem "kaminari"
 gem "hiredis"
 gem "redis"
 
+gem "paranoia"
+
 # Rack middleware for blocking & throttling abusive requests
 gem "rack-attack"
 
