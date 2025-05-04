@@ -25,12 +25,16 @@ class User < ApplicationRecord
   end
 
   def friends_sleep_records_from_previous_week
-    # Get sleep records from followed users from the previous week
-    user_ids = following.pluck(:id)
+    SleepRecord
+      .where(user_id: following.select(:id))
+      .where(clock_in_at: 1.week.ago..Time.current)
+      .where.not(clock_out_at: nil)
+      .order(duration_seconds: :desc)
+  end
 
-    SleepRecord.where(user_id: user_ids)
-              .where(clock_in_at: 1.week.ago..Time.current)
-              .where.not(clock_out_at: nil)
-              .order(duration_seconds: :desc)
+  private
+
+  def self.includes_associations
+    includes(:sleep_records).joins(:active_followings, :passive_followings)
   end
 end
