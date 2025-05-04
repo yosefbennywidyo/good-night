@@ -23,19 +23,19 @@ JSONAPI::Rails.configure do |config|
   #
   # # Set default cache.
   # # A lambda/proc that will be eval'd in the controller context.
-  # config.jsonapi_cache = ->() { nil }
+  config.jsonapi_cache = ->() { nil }
   #
   # # Uncomment the following to enable fragment caching. Make sure you
   # #   invalidate cache keys accordingly.
-  # config.jsonapi_cache = lambda {
-  #   Rails.cache
-  # }
+  config.jsonapi_cache = lambda {
+    Rails.cache
+  }
   #
   # # Set default exposures.
   # # A lambda/proc that will be eval'd in the controller context.
-  # config.jsonapi_expose = lambda {
-  #   { url_helpers: ::Rails.application.routes.url_helpers }
-  # }
+  config.jsonapi_expose = lambda {
+    { url_helpers: ::Rails.application.routes.url_helpers }
+  }
   #
   # # Set default fields.
   # # A lambda/proc that will be eval'd in the controller context.
@@ -70,8 +70,19 @@ JSONAPI::Rails.configure do |config|
   # config.jsonapi_pagination = ->(_) { {} }
   #
   # # Set a logger.
-  # config.logger = Logger.new(STDOUT)
+  config.logger = Logger.new(Rails.root.join("log", "json_api_logger.log"))
   #
   # # Uncomment the following to disable logging.
   # config.logger = Logger.new('/dev/null')
+
+
+  config.jsonapi_pagination = ->(resources) {
+    # Implement your pagination logic here
+    {
+      first: resources.first_page_url,
+      last: resources.last_page_url,
+      prev: resources.prev_page_url,
+      next: resources.next_page_url
+    }
+  }
 end
