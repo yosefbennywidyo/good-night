@@ -6,35 +6,39 @@ module Api
 
       # Get all sleep records for a user
       def index
+        self.class.include(Api::Pagination)
+
         if params[:per_page].present?
-          @sleep_records = @user.sleep_records.page(params[:page]).per(params[:per_page]).ordered_by_created
+          @sleep_records = @user.sleep_records.ordered_by_created.page(params[:page]).per(params[:per_page])
         else
-          @sleep_records = @user.sleep_records.page(params[:page]).ordered_by_created
+          @sleep_records = @user.sleep_records.ordered_by_created.page(params[:page])
         end
-        render jsonapi: @sleep_records
+        render jsonapi: @sleep_records, cache: Rails.cache
       end
 
       # Clock in operation
       def clock_in
         @sleep_record = @user.sleep_records.build(clock_in_at: Time.current)
         if @sleep_record.save
-          render jsonapi: @user.sleep_records.ordered_by_created, status: :created
+          render json: @user.sleep_records.ordered_by_created, status: :created
         else
-          render jsonapi_errors: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
+          render json: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       # Clock out operation
       def clock_out
         if @sleep_record.update(clock_out_at: Time.current)
-          render jsonapi: @user.sleep_records.ordered_by_created, status: :ok
+          render json: @user.sleep_records.ordered_by_created, status: :ok
         else
-          render jsonapi_errors: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
+          render json: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       # Get sleep records of followed users from the previous week
       def following_records
+        self.class.include(Api::Pagination)
+
         @friends_sleep_records = @user.friends_sleep_records_from_previous_week
 
         if params[:per_page].present?

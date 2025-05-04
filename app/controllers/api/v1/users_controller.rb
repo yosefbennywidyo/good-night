@@ -5,6 +5,8 @@ module Api
 
       # GET /users
       def index
+        self.class.include(Api::Pagination)
+
         if params[:per_page].present?
           @users = User.includes_associations.page(params[:page]).per(params[:per_page])
         else
@@ -16,7 +18,7 @@ module Api
 
       # GET /users/1
       def show
-        render jsonapi: @user
+        render json: @user
       end
 
       # POST /users
@@ -24,18 +26,18 @@ module Api
         @user = User.new(user_params)
 
         if @user.save
-          render jsonapi: @user, status: :created
+          render json: @user, status: :created
         else
-          render jsonapi_errors: @user.errors, status: :unprocessable_entity
+          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       # PATCH/PUT /users/1
       def update
         if @user.update(user_params)
-          render jsonapi: @user
+          render json: @user
         else
-          render jsonapi_errors: @user.errors, status: :unprocessable_entity
+          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
