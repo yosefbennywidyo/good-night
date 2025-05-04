@@ -16,7 +16,7 @@ gem "puma", ">= 5.0"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
-gem "solid_cache"
+# gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
@@ -37,6 +37,10 @@ gem "thruster", require: false
 
 # Efficient and convenient JSON API library for ruby
 gem "jsonapi-rails"
+gem "kaminari"
+
+gem "hiredis"
+gem "redis"
 
 # Rack middleware for blocking & throttling abusive requests
 gem "rack-attack"
