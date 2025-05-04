@@ -31,10 +31,10 @@ development:
     password: <%= ENV["POSTGRES_READONLY_PASSWORD"] %>
     adapter: postgresql
     replica: true
-  cache:
-    <<: *primary_development
-    database: good_night_development_cache
-    migrations_paths: db/cache_migrate
+#  cache:
+#    <<: *primary_development
+#    database: good_night_development_cache
+#    migrations_paths: db/cache_migrate
   queue:
     <<: *primary_development
     database: good_night_development_queue
@@ -113,10 +113,10 @@ profile:
     password: <%= ENV["POSTGRES_READONLY_PASSWORD"] %>
     adapter: postgresql
     replica: true
-  cache:
-    <<: *primary_profile
-    database: good_night_profile_cache
-    migrations_paths: db/cache_migrate
+#  cache:
+#    <<: *primary_profile
+#    database: good_night_profile_cache
+#    migrations_paths: db/cache_migrate
   queue:
     <<: *primary_profile
     database: good_night_profile_queue
@@ -166,10 +166,10 @@ production:
     password: <%= ENV["POSTGRES_READONLY_PASSWORD"] %>
     adapter: postgresql
     replica: true
-  cache:
-    <<: *primary_production
-    database: good_night_production_cache
-    migrations_paths: db/cache_migrate
+#  cache:
+#    <<: *primary_production
+#    database: good_night_production_cache
+#    migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
     database: good_night_production_queue
