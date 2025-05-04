@@ -4,35 +4,48 @@ module Api
       before_action :set_user
       before_action :set_sleep_record, only: [ :clock_out ]
 
+      # Get all sleep records for a user
+      def index
+        if params[:per_page].present?
+          @sleep_records = @user.sleep_records.page(params[:page]).per(params[:per_page]).ordered_by_created
+        else
+          @sleep_records = @user.sleep_records.page(params[:page]).ordered_by_created
+        end
+        render jsonapi: @sleep_records
+      end
+
       # Clock in operation
       def clock_in
         @sleep_record = @user.sleep_records.build(clock_in_at: Time.current)
         if @sleep_record.save
-          render json: format_sleep_records(@user.sleep_records.ordered_by_created), status: :created
+          render jsonapi: @user.sleep_records.ordered_by_created, status: :created
         else
-          render json: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
+          render jsonapi_errors: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       # Clock out operation
       def clock_out
         if @sleep_record.update(clock_out_at: Time.current)
-          render json: format_sleep_records(@user.sleep_records.ordered_by_created), status: :ok
+          render jsonapi: @user.sleep_records.ordered_by_created, status: :ok
         else
-          render json: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
+          render jsonapi_errors: { error: @sleep_record.errors.full_messages }, status: :unprocessable_entity
         end
-      end
-
-      # Get all sleep records for a user
-      def index
-        sleep_records = @user.sleep_records.ordered_by_created
-        render json: format_sleep_records(sleep_records), status: :ok
       end
 
       # Get sleep records of followed users from the previous week
       def following_records
-        sleep_records = @user.friends_sleep_records_from_previous_week
-        render json: format_sleep_records(sleep_records), status: :ok
+        @friends_sleep_records = @user.friends_sleep_records_from_previous_week
+
+        if params[:per_page].present?
+          @friends_sleep_records = Kaminari.paginate_array(@friends_sleep_records.ordered_by_created, total_count: @friends_sleep_records.size)
+                                  .page(params[:page]).per(params[:per_page])
+        else
+          @friends_sleep_records = Kaminari.paginate_array(@friends_sleep_records.ordered_by_created, total_count: @friends_sleep_records.size)
+                                  .page(params[:page])
+        end
+
+        render jsonapi: @friends_sleep_records, status: :ok
       end
 
       private
@@ -68,7 +81,7 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def sleep_record_params
-        params.permit(:id, :user_id, sleep_record: [ :clock_in_at, :clock_out_at ])
+        params.permit(:id, :user_id, :page, :per_page, sleep_record: [ :clock_in_at, :clock_out_at ])
       end
     end
   end

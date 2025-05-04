@@ -6,9 +6,13 @@ module Api
 
       # GET /followings
       def index
-        followers = @user.followers
+        if params[:per_page].present?
+          @followers = @user.followers.page(params[:page]).per(params[:per_page])
+        else
+          @followers = @user.followers.page(params[:page])
+        end
 
-        render json: followers.map { |user| { id: user.id, name: user.name } }, status: :ok
+        render jsonapi: @followers
       end
 
       # POST /followings
@@ -16,18 +20,18 @@ module Api
         @following = Following.new(following_params)
 
         if @following.save!
-          render json: @following, status: :created
+          render jsonapi: @following, status: :created
         else
-          render json: @following.errors, status: :unprocessable_entity
+          render jsonapi_errors: @following.errors, status: :unprocessable_entity
         end
       end
 
       # DELETE /followings/1
       def destroy
         if @user.unfollow(@target_user)
-          render json: { message: "Successfully unfollowed user" }, status: :ok
+          render jsonapi: { message: "Successfully unfollowed user" }, status: :ok
         else
-          render json: { error: "Unable to unfollow user" }, status: :unprocessable_entity
+          render jsonapi_errors: { error: "Unable to unfollow user" }, status: :unprocessable_entity
         end
       end
 
