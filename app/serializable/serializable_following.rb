@@ -1,5 +1,5 @@
 class SerializableFollowing < JSONAPI::Serializable::Resource
-  type 'followings'
+  type "followings"
 
   attributes :created_at, :updated_at
 
@@ -25,5 +25,9 @@ class SerializableFollowing < JSONAPI::Serializable::Resource
 
   link :self do
     @url_helpers.api_v1_following_url(@object.id)
+  end
+
+  def jsonapi_cache_key(*)
+    [ @object.cache_key_with_version ]
   end
 end

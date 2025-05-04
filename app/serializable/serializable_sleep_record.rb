@@ -26,4 +26,8 @@ class SerializableSleepRecord < JSONAPI::Serializable::Resource
   link :self do
     @url_helpers.following_records_api_v1_user_sleep_records_url(@object.id)
   end
+
+  def jsonapi_cache_key(*)
+    [ @object.cache_key_with_version ]
+  end
 end
