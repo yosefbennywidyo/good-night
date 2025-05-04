@@ -24,8 +24,8 @@ module Api
         post api_v1_users_url, params: { user: { name: @first_user.name } }, as: :json
 
         assert_response :unprocessable_entity
-        error_message = JSON.parse(response.body)["name"]
-        assert_includes error_message, "has already been taken"
+        error_message = JSON.parse(response.body)["errors"]
+        assert_includes error_message, "Name has already been taken"
       end
 
       test "should show user" do
@@ -44,11 +44,11 @@ module Api
       end
 
       test "should destroy user" do
-        assert_difference("User.count", -1) do
-          delete api_v1_user_url(@first_user), as: :json
-        end
+        delete api_v1_user_url(@first_user), as: :json
 
+        User.all.reload
         assert_response :no_content
+        assert_not User.exists?(@first_user.id)
       end
     end
   end

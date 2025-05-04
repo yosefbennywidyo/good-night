@@ -49,7 +49,7 @@ module Api
         assert_response :success
 
         response_json = JSON.parse(response.body)
-        assert_equal @user.following.count, response_json.size
+        assert_equal @user.following.count, response_json["data"].size
       end
     end
   end

@@ -30,7 +30,7 @@ module Api
 
         assert_response :success
         response_json = JSON.parse(response.body)
-        assert_equal @first_user.sleep_records.count, response_json.size
+        assert_equal @first_user.sleep_records.count, response_json["data"].size
       end
       test "should return sleep records from followed users from the previous week" do
         SleepRecord.destroy_all
@@ -47,7 +47,7 @@ module Api
 
         assert_response :success
         response_json = JSON.parse(response.body)
-        assert_equal 1, response_json.size
+        assert_equal 1, response_json["data"].size
       end
     end
   end
