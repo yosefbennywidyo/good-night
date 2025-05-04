@@ -6,12 +6,12 @@ module Api
       # GET /users
       def index
         if params[:per_page].present?
-          @users = User.all.page(params[:page]).per(params[:per_page])
+          @users = User.includes_associations.page(params[:page]).per(params[:per_page])
         else
-          @users = User.all.page(params[:page])
+          @users = User.includes_associations.page(params[:page])
         end
 
-        render jsonapi: @users
+        render jsonapi: @users, cache: Rails.cache
       end
 
       # GET /users/1
