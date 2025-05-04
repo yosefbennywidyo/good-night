@@ -1,4 +1,5 @@
 require "active_support/core_ext/integer/time"
+require "active_support/core_ext/numeric/bytes"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -43,8 +44,31 @@ Rails.application.configure do
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
+  # Create a separate logger for Redis errors
+  redis_logger = Logger.new("log/redis_profile.log", 10, 50.megabytes) # Keep 10 files, each 50MB max
+  redis_logger.formatter = proc do |severity, timestamp, progname, msg|
+    "[#{timestamp}] #{severity} #{progname}: #{msg}\n"
+  end
+
   # Replace the default in-process memory cache store with a durable alternative.
-  config.cache_store = :solid_cache_store
+  config.cache_store = :redis_cache_store, {
+    namespace: "good_night_profile", # Use a unique namespace for profile
+    compress: true,               # Compress cached data
+    expires_in: 1.day,            # Cache expiration period
+    url: ENV.fetch("REDIS_URL_PROFILE", "redis://localhost:6379/1"),
+    connect_timeout: 30,  # Seconds
+    read_timeout: 0.2,   # Seconds
+    write_timeout: 0.2,  # Seconds
+    reconnect_attempts: 1,
+    error_handler: ->(method:, returning:, exception:) {
+      redis_logger.error("[Redis Error] Method: #{method}, Returning: #{returning}, Exception: #{exception.message}")
+    },
+    race_condition_ttl: 5.seconds,
+    pool: {
+      size: 5,
+      timeout: 5
+    }
+  }
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
@@ -90,4 +114,6 @@ Rails.application.configure do
     Prosopite.prosopite_logger  = true
     Prosopite.stderr_logger     = true
   end
+
+  Rails.application.routes.default_url_options[:host] = "localhost:3000"
 end
