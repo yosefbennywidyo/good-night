@@ -12,7 +12,7 @@ module Api
           @followers = @user.followers.page(params[:page])
         end
 
-        render jsonapi: @followers
+        render jsonapi: @followers, cache: Rails.cache
       end
 
       # POST /followings

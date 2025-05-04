@@ -45,7 +45,7 @@ module Api
                                   .page(params[:page])
         end
 
-        render jsonapi: @friends_sleep_records, status: :ok
+        render jsonapi: @friends_sleep_records, cache: Rails.cache
       end
 
       private
